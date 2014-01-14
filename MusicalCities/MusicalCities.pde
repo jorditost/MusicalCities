@@ -5,6 +5,7 @@ import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import de.fhpotsdam.unfolding.utils.ScreenPosition;
+import de.fhpotsdam.unfolding.utils.GeoUtils;
 import de.fhpotsdam.unfolding.providers.*;
 
   
@@ -48,13 +49,23 @@ void mouseMoved() {
     
     if (club.hasTracklist()) {
       ScreenPosition pos = map.getScreenPosition(club.location);
-    
-      // Check distance
-      float distance = dist(mouseX, mouseY, pos.x, pos.y);
       
-      club.setGain(map(distance, 20, 500, 1.0, 0.0));
+      // Get geo-location at mouse position
+      Location pointerLocation = map.getLocation(mouseX, mouseY);
+      
+      // Calculate distance between mouse position and club
+      float distance = (float)GeoUtils.getDistance(club.location, pointerLocation);
+      
+      // Set gain - Max. Distance: 0.6
+      club.setGain(map(distance, 0.0, 0.6, 1.0, 0.0));
+      
+      // Check distance
+      //float distance = dist(mouseX, mouseY, pos.x, pos.y);
+      //club.setGain(map(distance, 20, 500, 1.0, 0.0));
     }
   }
+  
+  println(" ");
 }
 
 public ArrayList<Club> loadClubsFromCSV(String fileName) {
